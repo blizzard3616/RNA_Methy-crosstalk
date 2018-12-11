@@ -44,5 +44,47 @@ write.csv(hyper_down, file = "./tmp/hyper_down_wk2_UA.csv")
 write.csv(hypo_up, file = "./tmp/hypo_up_wk2_UA.csv")
 #From the summary, 305 genes find in hyper_down, and 53 genes find in hypo_up
 
+#------------------------------------------------------------------------------#
+# Load week 25 tumor data
+dtm25t <- read.csv(file = "./data/wk25t_pro_inter.csv", 
+                 header = TRUE, sep ="\t", col.names = )
+
+#Make hyper and hypo methylated list for week 25t
+lsm25t_hyper <- dtm25t$geneId[dtm25t$X25t_UVB..25t_UA.diff >= 0.3]
+lsm25t_hypo <- dtm25t$geneId[dtm25t$X25t_UVB..25t_UA.diff <= -0.3]
+
+summary(lsm25t_hyper)
+summary(lsm25t_hypo)
+# find unique genes from both lists
+lsm25t_hyper<- unique(lsm25t_hyper)
+lsm25t_hypo<- unique(lsm25t_hypo)
+
+# load RNA-seq data
+dtr25t <- read_csv("data/RNA/Tumor UA Ran version.csv", 
+                 col_types = cols(log2FoldChange = col_number(), 
+                                  padj = col_number(), pvalue = col_number()))
+
+# find unique genes from up- and down-regulated genes in RNA
+lsr25t_up <- dtr25t$gene[dtr25t$log2FoldChange >= 2.0]
+lsr25t_down <- dtr25t$gene[dtr25t$log2FoldChange <= -2.0]
+
+#Paired hyper-methylation with down-regulation gene
+hyper_down_25t <- unique(lsr25t_down[lsm25t_hyper %in% lsr25t_down])
+hypo_up_25t <- unique(lsr25t_up[lsm25t_hypo %in% lsr25t_down])
+
+summary(hyper_down_25t)
+summary(hypo_up_25t)
+
+write.csv(hyper_down_25t, file = "./tmp/hyper_down_wk25t_UA.csv")
+write.csv(hypo_up_25t, file = "./tmp/hypo_up_wk25t_UA.csv")
+#From the summary, 88 genes find in hyper_down, and 159 genes find in hypo_up
+
+
+View(hyper_down)
+
+
+
+
+
 
 
