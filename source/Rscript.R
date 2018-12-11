@@ -6,9 +6,43 @@
 
 require(data.table)
 
-
-
-# find gene significantly changes in promoter region#
+# Load data and find gene significantly changes in promoter and intergenic region#
 dtm2 <- read.csv(file = "./data/wk2_pro_inter.csv", 
             header = TRUE, sep ="\t", col.names = )
+colnames(dtm2)
+
+#Make hyper and hypo methylated list for week 2
+lsm2_hyper <- dtm2$geneId[dtm2$X2w_UVB..2w_UA.diff >= 0.3]
+lsm2_hypo <- dtm2$geneId[dtm2$X2w_UVB..2w_UA.diff <= -0.3]
+
+summary(lsm2_hyper)
+summary(lsm2_hypo)
+# find unique genes from both lists
+lsm2_hyper <- unique(lsm2_hyper)
+lsm2_hypo <- unique(lsm2_hypo)
+
+summary(lsm2_hyper)
+summary(lsm2_hypo)
+
+# load RNA-seq data
+dtr2 <- read_csv("data/RNA/Wk2 UA Ran version.csv", 
+                               col_types = cols(log2FoldChange = col_number(), 
+                                                padj = col_number(), pvalue = col_number()))
+
+# find unique genes from up- and down-regulated genes in RNA
+lsr2_up <- dtr2$gene[dtr2$log2FoldChange >= 2.0]
+lsr2_down <- dtr2$gene[dtr2$log2FoldChange <= -2.0]
+
+#Paired hyper-methylation with down-regulation gene
+hyper_down <- unique(lsr2_down[lsm2_hyper %in% lsr2_down])
+hypo_up <- unique(lsr2_up[lsm2_hypo %in% lsr2_up])
+
+summary(hyper_down)
+summary(hypo_up)
+
+write.csv(hyper_down, file = "./tmp/hyper_down_wk2_UA.csv")
+write.csv(hypo_up, file = "./tmp/hypo_up_wk2_UA.csv")
+#From the summary, 305 genes find in hyper_down, and 53 genes find in hypo_up
+
+
 
