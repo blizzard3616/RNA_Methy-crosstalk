@@ -5,7 +5,7 @@
 ########################################################
 
 require(data.table)
-
+library(readr)
 # Load data and find gene significantly changes in promoter and intergenic region#
 dtm2 <- read.csv(file = "./data/wk2_pro_inter.csv", 
             header = TRUE, sep ="\t", col.names = )
@@ -24,6 +24,8 @@ lsm2_hypo <- unique(lsm2_hypo)
 summary(lsm2_hyper)
 summary(lsm2_hypo)
 
+View(lsm2_hyper)
+
 # load RNA-seq data
 dtr2 <- read_csv("data/RNA/Wk2 UA Ran version.csv", 
                                col_types = cols(log2FoldChange = col_number(), 
@@ -33,12 +35,13 @@ dtr2 <- read_csv("data/RNA/Wk2 UA Ran version.csv",
 lsr2_up <- dtr2$gene[dtr2$log2FoldChange >= 2.0]
 lsr2_down <- dtr2$gene[dtr2$log2FoldChange <= -2.0]
 
-#Paired hyper-methylation with down-regulation gene
-hyper_down <- unique(lsr2_down[lsm2_hyper %in% lsr2_down])
-hypo_up <- unique(lsr2_up[lsm2_hypo %in% lsr2_up])
 
-summary(hyper_down)
-summary(hypo_up)
+summary(lsr2_up)
+View(lsr2_up)
+summary(lsr2_down)
+#Paired hyper-methylation with down-regulation gene
+hyper_down <- unique(lsr2_down[lsr2_down %in% lsm2_hyper])
+hypo_up <- unique(lsr2_up[lsr2_up %in% lsm2_hypo])
 
 write.csv(hyper_down, file = "./tmp/hyper_down_wk2_UA.csv")
 write.csv(hypo_up, file = "./tmp/hypo_up_wk2_UA.csv")
@@ -69,21 +72,16 @@ lsr25t_up <- dtr25t$gene[dtr25t$log2FoldChange >= 2.0]
 lsr25t_down <- dtr25t$gene[dtr25t$log2FoldChange <= -2.0]
 
 #Paired hyper-methylation with down-regulation gene
-hyper_down_25t <- unique(lsr25t_down[lsm25t_hyper %in% lsr25t_down])
-hypo_up_25t <- unique(lsr25t_up[lsm25t_hypo %in% lsr25t_down])
+hyper_down_25t <- unique(lsr25t_down[lsr25t_down %in% lsm25t_hyper])
+hypo_up_25t <- unique(lsr25t_up[lsr25t_up%in% lsm25t_hypo])
 
 summary(hyper_down_25t)
 summary(hypo_up_25t)
 
 write.csv(hyper_down_25t, file = "./tmp/hyper_down_wk25t_UA.csv")
 write.csv(hypo_up_25t, file = "./tmp/hypo_up_wk25t_UA.csv")
-#From the summary, 88 genes find in hyper_down, and 159 genes find in hypo_up
 
-
-View(hyper_down)
-
-
-
+#section off
 
 
 
